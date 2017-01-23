@@ -11,5 +11,5 @@ Pod::Spec.new do |s|
   s.requires_arc = true
 
   s.source_files = 'Pod/Classes/**/*'
-  s.ios.resource_bundle = { 'QULQuestionnaire' => 'Pod/Assets/**/*.png'
+  s.ios.resource_bundle = { 'QULQuestionnaire' => 'Pod/Assets/**/*.png' }
 end
