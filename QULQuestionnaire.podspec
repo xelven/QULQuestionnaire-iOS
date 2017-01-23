@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
   s.requires_arc = true
 
   s.source_files = 'Pod/Classes/**/*'
-  s.ios.resource_bundle = { 'QULQuestionnaire' => 'Pod/Assets/**/**/*.png' }
+  s.ios.resource_bundle = { 'QULQuestionnaire' => 'Pod/Assets/QULQuestionnaire.xcassets/**/*.png' }
 
   s.dependency "RMStepsController", "~> 1.0.2"
 end
