@@ -167,17 +167,20 @@
                                                               attribute:NSLayoutAttributeNotAnAttribute
                                                              multiplier:1.0
                                                                constant:33.0]];
+		NSInteger anwsers_height =[self findHeightForText:option[@"value"] havingWidth:200 andFont:[UIFont systemFontOfSize:14]].height;
         [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:button
                                                               attribute:NSLayoutAttributeHeight
                                                               relatedBy:NSLayoutRelationEqual
                                                                  toItem:nil
                                                               attribute:NSLayoutAttributeNotAnAttribute
                                                              multiplier:1.0
-                                                               constant:33.0]];
+                                                               constant:anwsers_height+3]];
         
         UILabel *label = [[UILabel alloc] init];
         label.translatesAutoresizingMaskIntoConstraints = NO;
         label.text = option[@"value"];
+		label.numberOfLines = 0;
+		label.preferredMaxLayoutWidth = 200;
         [scrollView addSubview:label];
         
         NSString *format;
@@ -209,6 +212,15 @@
                                                           attribute:NSLayoutAttributeCenterX
                                                          multiplier:1.0
                                                            constant:0]];
+}
+
+- (CGSize)findHeightForText:(NSString *)text havingWidth:(CGFloat)widthValue andFont:(UIFont *)font {
+	CGSize size = CGSizeZero;
+	if (text) {
+		CGRect frame = [text boundingRectWithSize:CGSizeMake(widthValue, CGFLOAT_MAX) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{ NSFontAttributeName:font } context:nil];
+		size = CGSizeMake(frame.size.width, frame.size.height + 1);
+	}
+	return size;
 }
 
 - (void)viewDidAppear:(BOOL)animated {

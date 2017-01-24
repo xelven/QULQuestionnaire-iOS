@@ -183,6 +183,8 @@ static const NSInteger otherOption = -1;
         UILabel *label = [[UILabel alloc] init];
         label.translatesAutoresizingMaskIntoConstraints = NO;
         label.text = option[@"value"];
+		label.numberOfLines = 0;
+		label.preferredMaxLayoutWidth = 200;
         [scrollView addSubview:label];
         
         [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:button
@@ -192,13 +194,14 @@ static const NSInteger otherOption = -1;
                                                               attribute:NSLayoutAttributeNotAnAttribute
                                                              multiplier:1.0
                                                                constant:33.0]];
+		NSInteger anwsers_height =[self findHeightForText:label.text havingWidth:280 andFont:label.font].height;
         [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:button
                                                               attribute:NSLayoutAttributeHeight
                                                               relatedBy:NSLayoutRelationEqual
                                                                  toItem:nil
                                                               attribute:NSLayoutAttributeNotAnAttribute
                                                              multiplier:1.0
-                                                            constant:33.0]];
+                                                            constant:anwsers_height]];
         
         if ([self.questionnaireData[@"orientation"] integerValue] == QULQuestionnaireSingleSelectOrientationHorizontal) {
             
@@ -428,6 +431,15 @@ static const NSInteger otherOption = -1;
                                              selector:@selector(keyboardWillHide:)
                                                  name:UIKeyboardWillHideNotification
                                                object:nil];
+}
+
+- (CGSize)findHeightForText:(NSString *)text havingWidth:(CGFloat)widthValue andFont:(UIFont *)font {
+	CGSize size = CGSizeZero;
+	if (text) {
+		CGRect frame = [text boundingRectWithSize:CGSizeMake(widthValue, CGFLOAT_MAX) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{ NSFontAttributeName:font } context:nil];
+		size = CGSizeMake(frame.size.width, frame.size.height + 1);
+	}
+	return size;
 }
 
 - (void)viewDidAppear:(BOOL)animated {
