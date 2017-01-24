@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "QULQuestionnaire"
-  s.version          = "0.4.1"
+  s.version          = "0.4.0"
   s.summary          = "Drop-in in-app questionnaire for iOS"
   s.homepage         = "https://github.com/xelven/QULQuestionnaire-iOS"
   s.license          = "Apache License, Version 2.0"
@@ -12,4 +12,6 @@ Pod::Spec.new do |s|
 
   s.source_files = 'Pod/Classes/**/*'
   s.ios.resource_bundle = { 'QULQuestionnaire' => 'Pod/Assets/**/*.png' }
+  
+  s.dependency "RMStepsController", "~> 1.0.2"
 end
