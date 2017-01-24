@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = "QULQuestionnaire"
-  s.version          = "0.4.0"
+  s.version          = "0.4.1"
   s.summary          = "Drop-in in-app questionnaire for iOS"
   s.homepage         = "https://github.com/xelven/QULQuestionnaire-iOS"
   s.license          = "Apache License, Version 2.0"
