@@ -32,6 +32,11 @@
 @interface QULQuestionnaireViewController ()
 
 @property (strong, nonatomic) NSMutableArray *stepViewControllers;
+@property (copy, nonatomic) void (^nextBlock)(NSMutableDictionary* results);
+@property (copy, nonatomic) void (^previousBlock)(NSMutableDictionary* results);
+@property (copy, nonatomic) void (^finishedBlock)(NSMutableDictionary* results);
+@property (copy, nonatomic) void (^cancelledBlock)(NSMutableDictionary* results);
+
 
 @end
 
@@ -104,14 +109,32 @@
     [self dismissViewControllerAnimated:YES completion:nil];
     
     self.results[@"endTime"] = [NSDate date];
+    
+    self.finishedBlock(self.results);
 }
 
 - (void)canceled {
     [self dismissViewControllerAnimated:YES completion:nil];
+    self.cancelledBlock(self.results);
 }
 
 - (BOOL)showStepsAnimated {
     return NO;
 }
 
+- (void)onNext:(void (^)(NSMutableDictionary* currentResults))nextBlock {
+    self.nextBlock = nextBlock;
+}
+
+- (void)onPrevious:(void (^)(NSMutableDictionary* currentResults))previousBlock {
+    self.previousBlock = previousBlock;
+}
+
+- (void)onFinished:(void (^)(NSMutableDictionary* results))finishedBlock {
+    self.finishedBlock = finishedBlock;
+}
+
+- (void)onCancelled:(void (^)(NSMutableDictionary* currentResults))cancelledBlock {
+    self.cancelledBlock = cancelledBlock;
+}
 @end
