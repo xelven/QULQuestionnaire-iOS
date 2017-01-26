@@ -94,6 +94,11 @@ static const NSInteger otherOption = -1;
 	if(viewIndex == 0)
 		isShowPrevious = NO;
 	
+	NSString* nextButtonStr = @"Next";
+	if(viewIndex >= [self.stepsController.childViewControllers count]-1){
+		nextButtonStr = @"Done";
+	}
+	
 	UIButton *previousButton = nil;
 	if(isShowPrevious == YES) {
 		previousButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
@@ -108,7 +113,7 @@ static const NSInteger otherOption = -1;
 	}
 	
     UIButton *nextButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    [nextButton setTitle:NSLocalizedString(@"Next", nil) forState:UIControlStateNormal];
+    [nextButton setTitle:NSLocalizedString(nextButtonStr, nil) forState:UIControlStateNormal];
     nextButton.translatesAutoresizingMaskIntoConstraints = NO;
     nextButton.enabled = ![self.questionnaireData[@"required"] boolValue];
     [nextButton addTarget:self
