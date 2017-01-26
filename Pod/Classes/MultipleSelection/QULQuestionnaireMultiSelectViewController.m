@@ -28,6 +28,7 @@
 }
 
 
+@property (strong, nonatomic) UIButton *previousButton;
 @property (strong, nonatomic) UIButton *nextButton;
 
 @property (strong, nonatomic) NSMutableArray *selectedOptions;
@@ -75,11 +76,31 @@
     
     UILabel *instructionLabel = [[UILabel alloc] init];
     instructionLabel.preferredMaxLayoutWidth = 280;
+	instructionLabel.font = [UIFont systemFontOfSize:12];
+	instructionLabel.textColor = [UIColor grayColor];
     instructionLabel.numberOfLines = 0;
     instructionLabel.translatesAutoresizingMaskIntoConstraints = NO;
     instructionLabel.text = self.questionnaireData[@"instruction"];
     [scrollView addSubview:instructionLabel];
-    
+	
+	BOOL isShowPrevious = YES;
+	NSInteger viewIndex = [self.stepsController.childViewControllers indexOfObject:self];
+	if(viewIndex == 0)
+		isShowPrevious = NO;
+	
+	UIButton *previousButton = nil;
+	if(isShowPrevious == YES) {
+		previousButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+		[previousButton setTitle:NSLocalizedString(NSLocalizedString(@"Previous", nil), nil)
+					forState:UIControlStateNormal];
+		previousButton.translatesAutoresizingMaskIntoConstraints = NO;
+		[previousButton addTarget:self
+					   action:@selector(previousProceed)
+			 forControlEvents:UIControlEventTouchUpInside];
+		self.previousButton = previousButton;
+		[self.view addSubview:self.previousButton];
+	}
+	
     UIButton *nextButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     [nextButton setTitle:NSLocalizedString(NSLocalizedString(@"Next", nil), nil)
                 forState:UIControlStateNormal];
@@ -90,7 +111,7 @@
          forControlEvents:UIControlEventTouchUpInside];
     self.nextButton = nextButton;
     [self.view addSubview:self.nextButton];
-    
+	
     if ([self.questionnaireData[@"randomized"] boolValue]) {
         NSMutableArray *shuffledOptions = [self.questionnaireData[@"options"] mutableCopy];
         [shuffledOptions shuffle];
@@ -99,16 +120,26 @@
         dataCopy[@"options"] = shuffledOptions;
         self.questionnaireData = dataCopy;
     }
-    
+	
     NSDictionary *views = NSDictionaryOfVariableBindings(scrollView,
                                                          questionLabel,
                                                          instructionLabel,
                                                          nextButton);
-    
+	if(isShowPrevious == YES)
+		views = NSDictionaryOfVariableBindings(scrollView,
+											   questionLabel,
+											   instructionLabel,
+											   previousButton,nextButton);
+	
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(20)-[scrollView]-[nextButton]-(20)-|"
                                                                       options:0
                                                                       metrics:nil
                                                                         views:views]];
+	if(isShowPrevious == YES)
+		[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(20)-[scrollView]-[previousButton]-(20)-|"
+																		  options:0
+																		  metrics:nil
+																			views:views]];
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[scrollView]|"
                                                                       options:0
                                                                       metrics:nil
@@ -125,11 +156,20 @@
                                                                       options:0
                                                                       metrics:nil
                                                                         views:views]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[nextButton]-|"
-                                                                      options:0
-                                                                      metrics:nil
-                                                                        views:views]];
-    
+	if(isShowPrevious == YES){
+		NSInteger button_width = self.view.frame.size.width/2;
+		NSString* visualFormat = [NSString stringWithFormat:@"H:|-[previousButton(%d)]-[nextButton]-|",button_width];
+		[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:visualFormat
+																		  options:0
+																		  metrics:nil
+																			views:views]];
+	} else {
+		[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[nextButton]-|"
+																		  options:0
+																		  metrics:nil
+																			views:views]];
+	}
+	
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:scrollView
                                                           attribute:NSLayoutAttributeCenterX
                                                           relatedBy:NSLayoutRelationEqual
@@ -244,6 +284,19 @@
     [self.stepsController showNextStep];
 }
 
+- (void)previousProceed {
+	NSMutableDictionary *result = [@{} mutableCopy];
+	result[@"q"] = self.questionnaireData[@"key"];
+	result[@"a"] = [@[] mutableCopy];
+	
+	[self.selectedOptions enumerateObjectsUsingBlock:^(NSNumber *buttonTag, NSUInteger idx, BOOL *stop) {
+		NSDictionary *option = self.questionnaireData[@"options"][[buttonTag integerValue]];
+		result[@"a"][idx] = option[@"key"];
+	}];
+	[self.stepsController.results[@"data"] addObject:result];
+	
+	[self.stepsController showPreviousStep];
+}
 
 - (void)checkboxToggle:(UIButton *)button {
     

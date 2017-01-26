@@ -29,7 +29,7 @@ static const NSInteger otherOption = -1;
     NSBundle *resourceBundle;
 }
 
-
+@property (strong, nonatomic) UIButton *previousButton;
 @property (strong, nonatomic) UIButton *nextButton;
 @property (strong, nonatomic) NSMutableArray *buttons;
 @property (strong, nonatomic) UITextField *textField;
@@ -83,10 +83,30 @@ static const NSInteger otherOption = -1;
     UILabel *instructionLabel = [[UILabel alloc] init];
     instructionLabel.preferredMaxLayoutWidth = 280;
     instructionLabel.numberOfLines = 0;
+	instructionLabel.font = [UIFont systemFontOfSize:12];
+	instructionLabel.textColor = [UIColor grayColor];
     instructionLabel.translatesAutoresizingMaskIntoConstraints = NO;
     instructionLabel.text = self.questionnaireData[@"instruction"];
     [scrollView addSubview:instructionLabel];
-    
+	
+	BOOL isShowPrevious = YES;
+	NSInteger viewIndex = [self.stepsController.childViewControllers indexOfObject:self];
+	if(viewIndex == 0)
+		isShowPrevious = NO;
+	
+	UIButton *previousButton = nil;
+	if(isShowPrevious == YES) {
+		previousButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+		[previousButton setTitle:NSLocalizedString(NSLocalizedString(@"Previous", nil), nil)
+						forState:UIControlStateNormal];
+		previousButton.translatesAutoresizingMaskIntoConstraints = NO;
+		[previousButton addTarget:self
+						   action:@selector(previousProceed)
+				 forControlEvents:UIControlEventTouchUpInside];
+		self.previousButton = previousButton;
+		[self.view addSubview:self.previousButton];
+	}
+	
     UIButton *nextButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     [nextButton setTitle:NSLocalizedString(@"Next", nil) forState:UIControlStateNormal];
     nextButton.translatesAutoresizingMaskIntoConstraints = NO;
@@ -119,22 +139,43 @@ static const NSInteger otherOption = -1;
     
     NSDictionary *views;
     if (decreaseIncreaseAccessory) {
-        views = NSDictionaryOfVariableBindings(scrollView,
+		if(isShowPrevious == YES){
+			views = NSDictionaryOfVariableBindings(scrollView,
+												   questionLabel,
+												   instructionLabel,
+												   previousButton,nextButton,
+												   decreaseIncreaseAccessory);
+		}else{
+			views = NSDictionaryOfVariableBindings(scrollView,
                                                questionLabel,
                                                instructionLabel,
                                                nextButton,
                                                decreaseIncreaseAccessory);
+		}
     } else {
-        views = NSDictionaryOfVariableBindings(scrollView,
+		if(isShowPrevious == YES){
+			views = NSDictionaryOfVariableBindings(scrollView,
+												   questionLabel,
+												   instructionLabel,
+												   previousButton,nextButton);
+		}else{
+			views = NSDictionaryOfVariableBindings(scrollView,
                                                questionLabel,
                                                instructionLabel,
                                                nextButton);
+		}
     }
     
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(20)-[scrollView]-[nextButton]-(20)-|"
                                                                       options:0
                                                                       metrics:nil
                                                                         views:views]];
+	if(isShowPrevious == YES){
+		[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(20)-[scrollView]-[previousButton]-(20)-|"
+																		  options:0
+																		  metrics:nil
+																			views:views]];
+	}
     [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[scrollView]|"
                                                                       options:0
                                                                       metrics:nil
@@ -152,11 +193,20 @@ static const NSInteger otherOption = -1;
                                                                       options:0
                                                                       metrics:0
                                                                         views:views]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[nextButton]-|"
+	if(isShowPrevious == YES){
+		NSInteger button_width = self.view.frame.size.width/2;
+		NSString* visualFormat = [NSString stringWithFormat:@"H:|-[previousButton(%d)]-[nextButton]-|",button_width];
+		[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:visualFormat
+																		  options:0
+																		  metrics:nil
+																			views:views]];
+	} else {
+		[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[nextButton]-|"
                                                                       options:0
                                                                       metrics:0
                                                                         views:views]];
-    
+	}
+	
     NSString *radioOffPath = [resourceBundle pathForResource:@"radioOff"
                                                       ofType:@"png"];
     UIImage *radioOff = [UIImage imageWithContentsOfFile:radioOffPath];
@@ -470,8 +520,29 @@ static const NSInteger otherOption = -1;
     [self.stepsController showNextStep];
 }
 
+- (void)previousProceed {
+	NSMutableDictionary *result = [@{} mutableCopy];
+	result[@"q"] = self.questionnaireData[@"key"];
+	
+	[self.buttons enumerateObjectsUsingBlock:^(UIButton *button, NSUInteger idx, BOOL *stop) {
+		if (button.selected) {
+			if (button.tag == otherOption) {
+				result[@"a"] = self.textField.text;
+			} else {
+				NSDictionary *option = self.questionnaireData[@"options"][button.tag];
+				result[@"a"] = option[@"key"];
+			}
+			
+			*stop = YES;
+		}
+	}];
+	[self.stepsController.results[@"data"] addObject:result];
+	
+	[self.stepsController showPreviousStep];
+}
+
 - (void)didSelectButton:(UIButton *)selected {
-    
+	
     if (!self.nextButton.enabled) {
         self.nextButton.enabled = YES;
     }

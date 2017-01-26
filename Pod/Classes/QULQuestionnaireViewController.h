@@ -26,9 +26,4 @@
 
 - (instancetype)initWithQuestionnaireData:(NSArray *)questionnaireData;
 
-- (void)onNext:(void (^)(NSMutableDictionary* currentResults))nextBlock;
-- (void)onPrevious:(void (^)(NSMutableDictionary* currentResults))previousBlock;
-- (void)onFinished:(void (^)(NSMutableDictionary* results))finishedBlock;
-- (void)onCancelled:(void (^)(NSMutableDictionary* currentResults))cancelledBlock;
-
 @end

@@ -34,6 +34,12 @@
 @property (nonatomic, strong, readwrite) RMStepsBar *stepsBar;
 @property (nonatomic, strong) UIView *stepViewControllerContainer;
 
+@property (copy, nonatomic) void (^nextBlock)(NSMutableDictionary* results);
+@property (copy, nonatomic) void (^previousBlock)(NSMutableDictionary* results);
+@property (copy, nonatomic) void (^finishedBlock)(NSMutableDictionary* results);
+@property (copy, nonatomic) void (^cancelledBlock)(NSMutableDictionary* results);
+
+
 @end
 
 @implementation RMStepsController
@@ -178,9 +184,13 @@
     __weak RMStepsController *blockself = self;
     [UIView animateWithDuration:0.3 delay:0 options:UIViewAnimationOptionLayoutSubviews animations:^{
         aViewController.view.frame = CGRectMake(0, y, blockself.stepViewControllerContainer.frame.size.width, blockself.stepViewControllerContainer.frame.size.height - y);
+		if(aViewController.view.alpha == 0)
+			aViewController.view.alpha = 1;
 		blockself.currentStepViewController.view.alpha = 0;
         blockself.currentStepViewController.view.frame = CGRectMake(fromLeft ? blockself.stepViewControllerContainer.frame.size.width : -blockself.stepViewControllerContainer.frame.size.width, blockself.currentStepViewController.view.frame.origin.y, blockself.currentStepViewController.view.frame.size.width, blockself.currentStepViewController.view.frame.size.height);
     } completion:^(BOOL finished) {
+		if(aViewController.view.alpha == 0)
+			aViewController.view.alpha = 1;
 		blockself.currentStepViewController.view.alpha = 0;
         [blockself.currentStepViewController.view removeFromSuperview];
         blockself.currentStepViewController = aViewController;
@@ -202,8 +212,12 @@
     if(index < [self.childViewControllers count]-1) {
         UIViewController *nextStepViewController = [self.childViewControllers objectAtIndex:index+1];
         [self showStepViewController:nextStepViewController animated:YES];
+		if(self.nextBlock)
+			self.nextBlock(self.results);
     } else {
         [self finishedAllSteps];
+		if(self.finishedBlock)
+			self.finishedBlock(self.results);
     }
 }
 
@@ -212,6 +226,8 @@
     if(index > 0) {
         UIViewController *nextStepViewController = [self.childViewControllers objectAtIndex:index-1];
         [self showStepViewController:nextStepViewController animated:YES];
+		if(self.previousBlock)
+			self.previousBlock(self.results);
     } else {
         [self canceled];
     }
@@ -228,6 +244,7 @@
 
 - (void)canceled {
     NSLog(@"Canceled");
+	
 }
 
 #pragma mark - RMStepsBar Delegates
@@ -241,10 +258,29 @@
 
 - (void)stepsBarDidSelectCancelButton:(RMStepsBar *)bar {
     [self canceled];
+	if(self.cancelledBlock)
+		self.cancelledBlock(self.results);
 }
 
 - (void)stepsBar:(RMStepsBar *)bar shouldSelectStepAtIndex:(NSInteger)index {
     [self showStepViewController:[self.childViewControllers objectAtIndex:index] animated:YES];
+}
+
+
+- (void)onNext:(void (^)(NSMutableDictionary* currentResults))nextBlock {
+	self.nextBlock = nextBlock;
+}
+
+- (void)onPrevious:(void (^)(NSMutableDictionary* currentResults))previousBlock {
+	self.previousBlock = previousBlock;
+}
+
+- (void)onFinished:(void (^)(NSMutableDictionary* results))finishedBlock {
+	self.finishedBlock = finishedBlock;
+}
+
+- (void)onCancelled:(void (^)(NSMutableDictionary* currentResults))cancelledBlock {
+	self.cancelledBlock = cancelledBlock;
 }
 
 @end
