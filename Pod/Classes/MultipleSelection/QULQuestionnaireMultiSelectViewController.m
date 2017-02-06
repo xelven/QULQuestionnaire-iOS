@@ -22,6 +22,7 @@
 #import "QULQuestionnaireMultiSelectViewController.h"
 #import "RMStepsController.h"
 #import "NSMutableArray+Shuffle.h"
+#import "QULTapGestureRecognizer.h"
 
 @interface QULQuestionnaireMultiSelectViewController () {
     NSBundle *resourceBundle;
@@ -226,6 +227,13 @@
 		label.numberOfLines = 0;
 		label.preferredMaxLayoutWidth = 200;
         [scrollView addSubview:label];
+		
+		label.userInteractionEnabled = YES;
+		QULTapGestureRecognizer *singleTap = [[QULTapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
+		singleTap.numberOfTapsRequired = 1;
+		singleTap.numberOfTouchesRequired = 1;
+		singleTap.buttonObj = button;
+		[label addGestureRecognizer:singleTap];
         
         NSString *format;
         if (i == 0) {
@@ -256,6 +264,13 @@
                                                           attribute:NSLayoutAttributeCenterX
                                                          multiplier:1.0
                                                            constant:0]];
+}
+
+- (void)handleSingleTap:(QULTapGestureRecognizer *)recognizer {
+	//	CGPoint location = [recognizer locationInView:[recognizer.view superview]];
+	if([recognizer isKindOfClass:[QULTapGestureRecognizer class]]==YES) {
+		[self checkboxToggle:recognizer.buttonObj];
+	}
 }
 
 - (CGSize)findHeightForText:(NSString *)text havingWidth:(CGFloat)widthValue andFont:(UIFont *)font {

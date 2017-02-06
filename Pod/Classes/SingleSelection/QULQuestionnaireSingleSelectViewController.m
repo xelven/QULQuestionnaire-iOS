@@ -22,6 +22,7 @@
 #import "QULQuestionnaireSingleSelectViewController.h"
 #import "RMStepsController.h"
 #import "NSMutableArray+Shuffle.h"
+#import "QULTapGestureRecognizer.h"
 
 static const NSInteger otherOption = -1;
 
@@ -241,6 +242,13 @@ static const NSInteger otherOption = -1;
 		label.numberOfLines = 0;
 		label.preferredMaxLayoutWidth = 200;
         [scrollView addSubview:label];
+		label.userInteractionEnabled = YES;
+		
+		QULTapGestureRecognizer *singleTap = [[QULTapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
+		singleTap.numberOfTapsRequired = 1;
+		singleTap.numberOfTouchesRequired = 1;
+		singleTap.buttonObj = button;
+		[label addGestureRecognizer:singleTap];
         
         [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:button
                                                               attribute:NSLayoutAttributeWidth
@@ -486,6 +494,13 @@ static const NSInteger otherOption = -1;
                                              selector:@selector(keyboardWillHide:)
                                                  name:UIKeyboardWillHideNotification
                                                object:nil];
+}
+
+- (void)handleSingleTap:(QULTapGestureRecognizer *)recognizer {
+//	CGPoint location = [recognizer locationInView:[recognizer.view superview]];
+	if([recognizer isKindOfClass:[QULTapGestureRecognizer class]]==YES) {
+		[self didSelectButton:recognizer.buttonObj];
+	}
 }
 
 - (CGSize)findHeightForText:(NSString *)text havingWidth:(CGFloat)widthValue andFont:(UIFont *)font {
