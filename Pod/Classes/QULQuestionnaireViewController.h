@@ -24,6 +24,9 @@
 
 @interface QULQuestionnaireViewController : RMStepsController
 
+@property (nonatomic, strong) UIColor *titleColor;
+@property (nonatomic, strong) UIColor *buttonColor;
+
 - (instancetype)initWithQuestionnaireData:(NSArray *)questionnaireData;
 
 @end

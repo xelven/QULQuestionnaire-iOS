@@ -217,6 +217,7 @@
 @implementation RMStepsBar
 
 @synthesize seperatorColor = _seperatorColor;
+@synthesize mainColor = _mainColor;
 
 #pragma mark - Init and Dealloc
 - (id)initWithFrame:(CGRect)frame {
@@ -266,6 +267,15 @@
 }
 
 #pragma mark - Properties
+
+-(void)setMainColor:(UIColor *)newMainColor
+{
+	if(newMainColor != _mainColor){
+		_mainColor = newMainColor;
+		[self.titleLabel setTextColor:newMainColor];
+	}
+}
+
 - (UIColor *)seperatorColor {
     if(!_seperatorColor) {
         self.seperatorColor = [UIColor colorWithWhite:0.75 alpha:1];
@@ -273,6 +283,7 @@
     
     return _seperatorColor;
 }
+
 
 - (void)setSeperatorColor:(UIColor *)newSeperatorColor {
     if(newSeperatorColor != _seperatorColor) {

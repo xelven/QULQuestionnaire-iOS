@@ -54,6 +54,10 @@
  */
 @property (nonatomic, strong, readonly) NSMutableDictionary *results;
 
+/**
+ color for the next/previous button
+ */
+@property (nonatomic, strong) UIColor *stepButtonColor;
 /// @name Instance Methods
 
 /**

@@ -92,7 +92,8 @@
 
 - (void)showQuestionnaireWithData:(NSArray *)questionnaireData {
     QULQuestionnaireViewController *controller = [[QULQuestionnaireViewController alloc] initWithQuestionnaireData:questionnaireData];
-    
+	controller.titleColor = [UIColor redColor];
+	controller.buttonColor = [UIColor darkGrayColor];
     [self presentViewController:controller animated:YES completion:NULL];
 }
 

@@ -98,6 +98,9 @@
 		previousButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
 		[previousButton setTitle:NSLocalizedString(NSLocalizedString(@"Previous", nil), nil)
 					forState:UIControlStateNormal];
+		[previousButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
+		if(self.stepsController.stepButtonColor)
+			[previousButton setTitleColor:self.stepsController.stepButtonColor forState:UIControlStateNormal];
 		previousButton.translatesAutoresizingMaskIntoConstraints = NO;
 		[previousButton addTarget:self
 					   action:@selector(previousProceed)
@@ -109,6 +112,9 @@
     UIButton *nextButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     [nextButton setTitle:NSLocalizedString(NSLocalizedString(nextButtonStr, nil), nil)
                 forState:UIControlStateNormal];
+	[nextButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
+	if(self.stepsController.stepButtonColor)
+		[nextButton setTitleColor:self.stepsController.stepButtonColor forState:UIControlStateNormal];
     nextButton.translatesAutoresizingMaskIntoConstraints = NO;
     nextButton.enabled = ![self.questionnaireData[@"required"] boolValue];
     [nextButton addTarget:self
@@ -287,6 +293,9 @@
     
     UIScrollView *scrollView = [[self.view subviews] firstObject];
     [scrollView flashScrollIndicators];
+	
+	if(self.stepsController.stepButtonColor)
+		[self.nextButton setTitleColor:self.stepsController.stepButtonColor forState:UIControlStateNormal];
 }
 
 - (void)proceed {

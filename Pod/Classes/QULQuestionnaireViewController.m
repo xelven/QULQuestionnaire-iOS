@@ -60,6 +60,11 @@
     self.results[@"data"] = [@[] mutableCopy];
     self.results[@"user"] = @"userId";
     self.results[@"startTime"] = [NSDate date];
+	if(self.titleColor)
+		self.stepsBar.mainColor = self.titleColor;
+	
+	if(self.buttonColor)
+		self.stepButtonColor = self.buttonColor;
 }
 
 - (void)prepareViewControllers:(NSArray *)questionnaireData {

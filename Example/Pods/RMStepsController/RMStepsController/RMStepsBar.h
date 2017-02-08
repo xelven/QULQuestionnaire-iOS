@@ -122,6 +122,11 @@
 @property (nonatomic, strong) UIColor *seperatorColor;
 
 /**
+ used to set questionnaire title color.
+ */
+@property (nonatomic, strong) UIColor *mainColor;
+
+/**
  Used to set the index of the selected step. When changing the selected step using this property the change will not be animated.
  
  @see `-[RMStepsBar setIndexOfSelectedStep:animated:]`
