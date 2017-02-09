@@ -77,14 +77,14 @@ static const NSInteger otherOption = -1;
     questionLabel.preferredMaxLayoutWidth = 280;
     questionLabel.translatesAutoresizingMaskIntoConstraints = NO;
     questionLabel.numberOfLines = 0;
-    questionLabel.font = [UIFont boldSystemFontOfSize:21.0];
+    questionLabel.font = [UIFont boldSystemFontOfSize:24.0];
     questionLabel.text = self.questionnaireData[@"question"];
     [scrollView addSubview:questionLabel];
     
     UILabel *instructionLabel = [[UILabel alloc] init];
     instructionLabel.preferredMaxLayoutWidth = 280;
     instructionLabel.numberOfLines = 0;
-	instructionLabel.font = [UIFont systemFontOfSize:12];
+	instructionLabel.font = [UIFont systemFontOfSize:17];
 	instructionLabel.textColor = [UIColor grayColor];
     instructionLabel.translatesAutoresizingMaskIntoConstraints = NO;
     instructionLabel.text = self.questionnaireData[@"instruction"];
@@ -231,7 +231,7 @@ static const NSInteger otherOption = -1;
     self.buttons = [@[] mutableCopy];
     for (NSDictionary *option in self.questionnaireData[@"options"]) {
 
-        UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+        QULButton *button = [QULButton buttonWithType:UIButtonTypeCustom];
         button.translatesAutoresizingMaskIntoConstraints = NO;
         [button setImage:radioOff forState:UIControlStateNormal];
         [button setImage:radioOn forState:UIControlStateSelected];
@@ -244,12 +244,14 @@ static const NSInteger otherOption = -1;
         
         UILabel *label = [[UILabel alloc] init];
         label.translatesAutoresizingMaskIntoConstraints = NO;
+		label.font = [UIFont systemFontOfSize:17];
         label.text = option[@"value"];
 		label.numberOfLines = 0;
 		label.preferredMaxLayoutWidth = 200;
         [scrollView addSubview:label];
-		label.userInteractionEnabled = YES;
+		button.labelObj = label;
 		
+		label.userInteractionEnabled = YES;
 		QULTapGestureRecognizer *singleTap = [[QULTapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
 		singleTap.numberOfTapsRequired = 1;
 		singleTap.numberOfTouchesRequired = 1;
@@ -270,7 +272,7 @@ static const NSInteger otherOption = -1;
                                                                  toItem:nil
                                                               attribute:NSLayoutAttributeNotAnAttribute
                                                              multiplier:1.0
-                                                            constant:anwsers_height]];
+                                                            constant:anwsers_height+10]];
         
         if ([self.questionnaireData[@"orientation"] integerValue] == QULQuestionnaireSingleSelectOrientationHorizontal) {
             

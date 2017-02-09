@@ -71,13 +71,13 @@
     questionLabel.preferredMaxLayoutWidth = 280;
     questionLabel.translatesAutoresizingMaskIntoConstraints = NO;
     questionLabel.numberOfLines = 0;
-    questionLabel.font = [UIFont boldSystemFontOfSize:21.0];
+    questionLabel.font = [UIFont boldSystemFontOfSize:24.0];
     questionLabel.text = self.questionnaireData[@"question"];
     [scrollView addSubview:questionLabel];
     
     UILabel *instructionLabel = [[UILabel alloc] init];
     instructionLabel.preferredMaxLayoutWidth = 280;
-	instructionLabel.font = [UIFont systemFontOfSize:12];
+	instructionLabel.font = [UIFont systemFontOfSize:17];
 	instructionLabel.textColor = [UIColor grayColor];
     instructionLabel.numberOfLines = 0;
     instructionLabel.translatesAutoresizingMaskIntoConstraints = NO;
@@ -201,7 +201,7 @@
     id previousElement = instructionLabel;
     for (NSDictionary *option in self.questionnaireData[@"options"]) {
         
-        UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+        QULButton *button = [QULButton buttonWithType:UIButtonTypeCustom];
         button.translatesAutoresizingMaskIntoConstraints = NO;
         [button setImage:radioOff forState:UIControlStateNormal];
         [button setImage:radioOn forState:UIControlStateSelected];
@@ -218,21 +218,23 @@
                                                               attribute:NSLayoutAttributeNotAnAttribute
                                                              multiplier:1.0
                                                                constant:33.0]];
-		NSInteger anwsers_height =[self findHeightForText:option[@"value"] havingWidth:200 andFont:[UIFont systemFontOfSize:14]].height;
+		NSInteger anwsers_height =[self findHeightForText:option[@"value"] havingWidth:200 andFont:[UIFont systemFontOfSize:17]].height;
         [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:button
                                                               attribute:NSLayoutAttributeHeight
                                                               relatedBy:NSLayoutRelationEqual
                                                                  toItem:nil
                                                               attribute:NSLayoutAttributeNotAnAttribute
                                                              multiplier:1.0
-                                                               constant:anwsers_height+3]];
+                                                               constant:anwsers_height+10]];
         
         UILabel *label = [[UILabel alloc] init];
         label.translatesAutoresizingMaskIntoConstraints = NO;
+		label.font = [UIFont systemFontOfSize:17];
         label.text = option[@"value"];
 		label.numberOfLines = 0;
 		label.preferredMaxLayoutWidth = 200;
         [scrollView addSubview:label];
+		button.labelObj = label;
 		
 		label.userInteractionEnabled = YES;
 		QULTapGestureRecognizer *singleTap = [[QULTapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
@@ -276,6 +278,7 @@
 	//	CGPoint location = [recognizer locationInView:[recognizer.view superview]];
 	if([recognizer isKindOfClass:[QULTapGestureRecognizer class]]==YES) {
 		[self checkboxToggle:recognizer.buttonObj];
+//		[UIFont boldSystemFontOfSize:17];
 	}
 }
 
