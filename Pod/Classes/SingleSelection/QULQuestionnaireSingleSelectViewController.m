@@ -427,7 +427,8 @@ static const NSInteger otherOption = -1;
         i++;
 		if(option[@"selected"] && option[@"selected"] != [NSNull null]){
 			BOOL selected = [option[@"selected"]boolValue];
-			[self didSelectButton:button];
+			if(selected == YES)
+				[self didSelectButton:button];
 		}
     }
     
