@@ -26,7 +26,8 @@
   "options": [
               {
               "key": "r1",
-              "value": "In Person,In Person,In Person,In Person,In Person,In Person,In Person,In Person,In Person,In Person,In Person,In Person,In Person,In Person"
+              "value": "In Person,In Person,In Person,In Person,In Person,In Person,In Person,In Person,In Person,In Person,In Person,In Person,In Person,In Person",
+			  "default":true
               },
               {
               "key": "r2",
@@ -35,7 +36,7 @@
               {
               "key": "r3",
               "value": "Via Internet",
-              "default": true
+              "selected": true
               },
               {
               "key": "r4",

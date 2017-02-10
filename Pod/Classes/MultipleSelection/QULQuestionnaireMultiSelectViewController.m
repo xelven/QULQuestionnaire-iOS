@@ -263,7 +263,14 @@
         
         previousElement = button;
         i++;
+		
+		if(option[@"selected"] && option[@"selected"] != [NSNull null]){
+			BOOL selected = [option[@"selected"]boolValue];
+			[self checkboxToggle:button];
+		}
     }
+	
+	
     
     [self.view addConstraint:[NSLayoutConstraint constraintWithItem:scrollView
                                                           attribute:NSLayoutAttributeCenterX
