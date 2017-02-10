@@ -55,7 +55,9 @@
     
     [self.view addSubview:self.stepViewControllerContainer];
     [self.view addSubview:self.stepsBar];
-    
+	
+	self.onRunningStep = NO;
+	
     RMStepsBar *stepsBar = self.stepsBar;
     UIView *container = self.stepViewControllerContainer;
     
@@ -160,6 +162,11 @@
 }
 
 - (void)showStepViewControllerWithSlideInAnimation:(UIViewController *)aViewController {
+	if(self.onRunningStep == YES)
+		return;
+	
+	self.onRunningStep = YES;
+	
     NSInteger oldIndex = [self.childViewControllers indexOfObject:self.currentStepViewController];
     NSInteger newIndex = [self.childViewControllers indexOfObject:aViewController];
     
@@ -194,6 +201,7 @@
 		blockself.currentStepViewController.view.alpha = 0;
         [blockself.currentStepViewController.view removeFromSuperview];
         blockself.currentStepViewController = aViewController;
+		self.onRunningStep = NO;
     }];
 }
 

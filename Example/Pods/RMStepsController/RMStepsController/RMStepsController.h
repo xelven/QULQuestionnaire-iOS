@@ -60,6 +60,8 @@
 @property (nonatomic, strong) UIColor *stepButtonColor;
 /// @name Instance Methods
 
+@property (atomic, assign) BOOL onRunningStep;
+
 /**
  A subclass of `RMStepsController` is supposed to return an array of view controllers here. Every view controller will be one step in the process. The first element in the array will be the first step and the last element will be the last step.
  
