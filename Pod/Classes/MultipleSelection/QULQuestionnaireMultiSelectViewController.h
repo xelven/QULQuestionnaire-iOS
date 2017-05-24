@@ -20,8 +20,9 @@
 
 
 #import <UIKit/UIKit.h>
+#import "QULQuestionnaireBaseViewController.h"
 
-@interface QULQuestionnaireMultiSelectViewController : UIViewController
+@interface QULQuestionnaireMultiSelectViewController : QULQuestionnaireBaseViewController
 
 @property (nonatomic, strong) NSDictionary *questionnaireData;
 

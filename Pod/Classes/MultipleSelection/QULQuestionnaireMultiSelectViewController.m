@@ -28,10 +28,6 @@
     NSBundle *resourceBundle;
 }
 
-
-@property (strong, nonatomic) UIButton *previousButton;
-@property (strong, nonatomic) UIButton *nextButton;
-
 @property (strong, nonatomic) NSMutableArray *selectedOptions;
 
 @end
@@ -62,66 +58,17 @@
                                                ofType:@"bundle"]];
 
     self.selectedOptions = [@[] mutableCopy];
-    
-    UIScrollView *scrollView = [[UIScrollView alloc] init];
-    scrollView.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.view addSubview:scrollView];
-    
-    UILabel *questionLabel = [[UILabel alloc] init];
-    questionLabel.preferredMaxLayoutWidth = 280;
-    questionLabel.translatesAutoresizingMaskIntoConstraints = NO;
-    questionLabel.numberOfLines = 0;
-    questionLabel.font = [UIFont boldSystemFontOfSize:24.0];
-    questionLabel.text = self.questionnaireData[@"question"];
-    [scrollView addSubview:questionLabel];
-    
+	
+	[self updateQuestionTitle:self.questionnaireData[@"question"]];
+	self.required = ![self.questionnaireData[@"required"] boolValue];
+
     UILabel *instructionLabel = [[UILabel alloc] init];
-    instructionLabel.preferredMaxLayoutWidth = 280;
-	instructionLabel.font = [UIFont systemFontOfSize:17];
-	instructionLabel.textColor = [UIColor grayColor];
+	instructionLabel.font = [UIFont systemFontOfSize:12];
+	instructionLabel.textColor = [UIColor colorWithRed:138.f/255.f green:138.f/255.f blue:138.f/255.f alpha:1.f]; // #8A8A8A
     instructionLabel.numberOfLines = 0;
     instructionLabel.translatesAutoresizingMaskIntoConstraints = NO;
     instructionLabel.text = self.questionnaireData[@"instruction"];
-    [scrollView addSubview:instructionLabel];
-	
-	BOOL isShowPrevious = YES;
-	NSInteger viewIndex = [self.stepsController.childViewControllers indexOfObject:self];
-	if(viewIndex == 0)
-		isShowPrevious = NO;
-	NSString* nextButtonStr = @"Next";
-	if(viewIndex >= [self.stepsController.childViewControllers count]-1){
-		nextButtonStr = @"Done";
-	}
-	
-	UIButton *previousButton = nil;
-	if(isShowPrevious == YES) {
-		previousButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-		[previousButton setTitle:NSLocalizedString(NSLocalizedString(@"Previous", nil), nil)
-					forState:UIControlStateNormal];
-		[previousButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
-		if(self.stepsController.stepButtonColor)
-			[previousButton setTitleColor:self.stepsController.stepButtonColor forState:UIControlStateNormal];
-		previousButton.translatesAutoresizingMaskIntoConstraints = NO;
-		[previousButton addTarget:self
-					   action:@selector(previousProceed)
-			 forControlEvents:UIControlEventTouchUpInside];
-		self.previousButton = previousButton;
-		[self.view addSubview:self.previousButton];
-	}
-	
-    UIButton *nextButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    [nextButton setTitle:NSLocalizedString(NSLocalizedString(nextButtonStr, nil), nil)
-                forState:UIControlStateNormal];
-	[nextButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
-	if(self.stepsController.stepButtonColor)
-		[nextButton setTitleColor:self.stepsController.stepButtonColor forState:UIControlStateNormal];
-    nextButton.translatesAutoresizingMaskIntoConstraints = NO;
-    nextButton.enabled = ![self.questionnaireData[@"required"] boolValue];
-    [nextButton addTarget:self
-                   action:@selector(proceed)
-         forControlEvents:UIControlEventTouchUpInside];
-    self.nextButton = nextButton;
-    [self.view addSubview:self.nextButton];
+    [self.contentView addSubview:instructionLabel];
 	
     if ([self.questionnaireData[@"randomized"] boolValue]) {
         NSMutableArray *shuffledOptions = [self.questionnaireData[@"options"] mutableCopy];
@@ -131,137 +78,113 @@
         dataCopy[@"options"] = shuffledOptions;
         self.questionnaireData = dataCopy;
     }
-	
-    NSDictionary *views = NSDictionaryOfVariableBindings(scrollView,
-                                                         questionLabel,
-                                                         instructionLabel,
-                                                         nextButton);
-	if(isShowPrevious == YES)
-		views = NSDictionaryOfVariableBindings(scrollView,
-											   questionLabel,
-											   instructionLabel,
-											   previousButton,nextButton);
-	
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(20)-[scrollView]-[nextButton]-(20)-|"
-                                                                      options:0
-                                                                      metrics:nil
-                                                                        views:views]];
-	if(isShowPrevious == YES)
-		[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(20)-[scrollView]-[previousButton]-(20)-|"
-																		  options:0
-																		  metrics:nil
+
+	UIColor *separatorColor = [UIColor colorWithRed:229.f/255.f green:229.f/255.f blue:229.f/255.f alpha:1.f]; // #E5E5E5
+	UIView *startSeparatorView = [[UIView alloc] init];
+	startSeparatorView.translatesAutoresizingMaskIntoConstraints = NO;
+	startSeparatorView.backgroundColor = separatorColor;
+	[self.contentView addSubview:startSeparatorView];
+
+	UIView *endSeparatorView = [[UIView alloc] init];
+	endSeparatorView.translatesAutoresizingMaskIntoConstraints = NO;
+	endSeparatorView.backgroundColor = separatorColor;
+	[self.contentView addSubview:endSeparatorView];
+
+	NSDictionary *views = @{@"questionLabel": self.questionLabel,
+							@"instructionLabel": instructionLabel,
+							@"startSeparatorView": startSeparatorView,
+							@"endSeparatorView": endSeparatorView};
+
+    [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[questionLabel]-(57)-[instructionLabel]-(2)-[startSeparatorView(1)]"
+																		options:0
+																		metrics:nil
 																			views:views]];
-    [self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[scrollView]|"
-                                                                      options:0
-                                                                      metrics:nil
-                                                                        views:views]];
-    [scrollView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-[questionLabel]-[instructionLabel]"
-                                                                      options:0
-                                                                      metrics:nil
-                                                                        views:views]];
-    [scrollView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[questionLabel]-|"
-                                                                      options:0
-                                                                      metrics:nil
-                                                                        views:views]];
-    [scrollView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[instructionLabel]-|"
-                                                                      options:0
-                                                                      metrics:nil
-                                                                        views:views]];
-	if(isShowPrevious == YES){
-		NSInteger button_width = self.view.frame.size.width/2;
-		NSString* visualFormat = [NSString stringWithFormat:@"H:|-[previousButton(%d)]-[nextButton]-|",button_width];
-		[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:visualFormat
-																		  options:0
-																		  metrics:nil
-																			views:views]];
-	} else {
-		[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[nextButton]-|"
-																		  options:0
-																		  metrics:nil
-																			views:views]];
-	}
-	
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:scrollView
-                                                          attribute:NSLayoutAttributeCenterX
-                                                          relatedBy:NSLayoutRelationEqual
-                                                             toItem:questionLabel
-                                                          attribute:NSLayoutAttributeCenterX
-                                                         multiplier:1.0
-                                                           constant:0]];
-    
-    
-    NSString *radioOffPath = [resourceBundle pathForResource:@"checkboxOff"
-                                                      ofType:@"png"];
-    UIImage *radioOff = [UIImage imageWithContentsOfFile:radioOffPath];
-    NSString *radioOnPath = [resourceBundle pathForResource:@"checkboxOn"
-                                                     ofType:@"png"];
+    [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(15)-[instructionLabel]-(15@999)-|"
+																			 options:0
+																			 metrics:nil
+																			   views:views]];
+	[self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[startSeparatorView]|"
+																			 options:0
+																			 metrics:nil
+																			   views:views]];
+	[self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|[endSeparatorView]|"
+																			 options:0
+																			 metrics:nil
+																			   views:views]];
+
+    NSString *radioOffPath = [resourceBundle pathForResource:@"checkboxOff" ofType:@"png"];
+    NSString *radioOnPath = [resourceBundle pathForResource:@"checkboxOn" ofType:@"png"];
+	UIImage *radioOff = [UIImage imageWithContentsOfFile:radioOffPath];
     UIImage *radioOn = [UIImage imageWithContentsOfFile:radioOnPath];
-    
-    int i=0;
-    id previousElement = instructionLabel;
+
+    int i = 0;
+    id previousElement = startSeparatorView;
     for (NSDictionary *option in self.questionnaireData[@"options"]) {
-        
         QULButton *button = [QULButton buttonWithType:UIButtonTypeCustom];
         button.translatesAutoresizingMaskIntoConstraints = NO;
+		button.tag = i;
         [button setImage:radioOff forState:UIControlStateNormal];
         [button setImage:radioOn forState:UIControlStateSelected];
-        button.tag = i;
-        [button addTarget:self
-                   action:@selector(checkboxToggle:)
-         forControlEvents:UIControlEventTouchUpInside];
-        [scrollView addSubview:button];
-        
-        [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:button
-                                                              attribute:NSLayoutAttributeWidth
-                                                              relatedBy:NSLayoutRelationEqual
-                                                                 toItem:nil
-                                                              attribute:NSLayoutAttributeNotAnAttribute
-                                                             multiplier:1.0
-                                                               constant:33.0]];
-		NSInteger anwsers_height =[self findHeightForText:option[@"value"] havingWidth:200 andFont:[UIFont systemFontOfSize:17]].height;
-        [scrollView addConstraint:[NSLayoutConstraint constraintWithItem:button
-                                                              attribute:NSLayoutAttributeHeight
-                                                              relatedBy:NSLayoutRelationEqual
-                                                                 toItem:nil
-                                                              attribute:NSLayoutAttributeNotAnAttribute
-                                                             multiplier:1.0
-                                                               constant:anwsers_height+10]];
-        
-        UILabel *label = [[UILabel alloc] init];
+        [button addTarget:self action:@selector(checkboxToggle:) forControlEvents:UIControlEventTouchUpInside];
+        [self.contentView addSubview:button];
+
+		UILabel *label = [[UILabel alloc] init];
         label.translatesAutoresizingMaskIntoConstraints = NO;
 		label.font = [UIFont systemFontOfSize:17];
-        label.text = option[@"value"];
 		label.numberOfLines = 0;
-		label.preferredMaxLayoutWidth = 200;
-        [scrollView addSubview:label];
+		label.text = option[@"value"];
+        [self.contentView addSubview:label];
 		button.labelObj = label;
-		
+
 		label.userInteractionEnabled = YES;
 		QULTapGestureRecognizer *singleTap = [[QULTapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
 		singleTap.numberOfTapsRequired = 1;
 		singleTap.numberOfTouchesRequired = 1;
 		singleTap.buttonObj = button;
 		[label addGestureRecognizer:singleTap];
-        
+
+		UIView *separatorView = [[UIView alloc] init];
+		separatorView.translatesAutoresizingMaskIntoConstraints = NO;
+		separatorView.backgroundColor = separatorColor;
+		[self.contentView addSubview:separatorView];
+
+		CGFloat anwsersWidth = [UIScreen mainScreen].bounds.size.width - 55 - 8;
+		NSInteger anwsersHeight = [self findHeightForText:option[@"value"] havingWidth:anwsersWidth andFont:label.font].height;
+		anwsersHeight += 10;
+		if (anwsersHeight < 51) {
+			anwsersHeight = 51;
+		}
+
+		NSDictionary *viewBindings = NSDictionaryOfVariableBindings(previousElement, label, button, separatorView, endSeparatorView);
+
+		[self.contentView addConstraint:[NSLayoutConstraint constraintWithItem:button
+																	 attribute:NSLayoutAttributeHeight
+																	 relatedBy:NSLayoutRelationEqual
+																		toItem:nil
+																	 attribute:NSLayoutAttributeNotAnAttribute
+																	multiplier:1.0
+																	  constant:anwsersHeight]];
         NSString *format;
-        if (i == 0) {
-            format = @"V:[previousElement]-(45)-[button]";
-        } else if (i == [self.questionnaireData[@"options"] count]-1) {
-            format = @"V:[previousElement]-[button]|";
+        if (i == [self.questionnaireData[@"options"] count]-1) {
+            format = @"V:[previousElement][button][endSeparatorView(1)]|";
         } else {
-            format = @"V:[previousElement]-[button]";
+            format = @"V:[previousElement][button][separatorView(1)]";
         }
+		
+        [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:format
+																				 options:0
+																				 metrics:nil
+																				   views:viewBindings]];
+        [self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(16)-[button(33)]-(4)-[label]-(15@999)-|"
+																				 options:NSLayoutFormatAlignAllCenterY
+																				 metrics:nil
+																				   views:viewBindings]];
+		[self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(55)-[separatorView]-(0@999)-|"
+																				 options:0
+																				 metrics:nil
+																				   views:viewBindings]];
         
-        [scrollView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:format
-                                                                          options:NSLayoutFormatAlignAllLeading
-                                                                          metrics:nil
-                                                                            views:NSDictionaryOfVariableBindings(previousElement,button)]];
-        [scrollView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-[button]-[label]-|"
-                                                                          options:NSLayoutFormatAlignAllCenterY
-                                                                          metrics:nil
-                                                                            views:NSDictionaryOfVariableBindings(button,label)]];
-        
-        previousElement = button;
+        previousElement = separatorView;
         i++;
 		
 		if(option[@"selected"] && option[@"selected"] != [NSNull null]){
@@ -270,23 +193,11 @@
 				[self checkboxToggle:button];
 		}
     }
-	
-	
-    
-    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:scrollView
-                                                          attribute:NSLayoutAttributeCenterX
-                                                          relatedBy:NSLayoutRelationEqual
-                                                             toItem:questionLabel
-                                                          attribute:NSLayoutAttributeCenterX
-                                                         multiplier:1.0
-                                                           constant:0]];
 }
 
 - (void)handleSingleTap:(QULTapGestureRecognizer *)recognizer {
-	//	CGPoint location = [recognizer locationInView:[recognizer.view superview]];
-	if([recognizer isKindOfClass:[QULTapGestureRecognizer class]]==YES) {
+	if([recognizer isKindOfClass:[QULTapGestureRecognizer class]] == YES) {
 		[self checkboxToggle:recognizer.buttonObj];
-//		[UIFont boldSystemFontOfSize:17];
 	}
 }
 
@@ -299,31 +210,29 @@
 	return size;
 }
 
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-    
-    UIScrollView *scrollView = [[self.view subviews] firstObject];
-    [scrollView flashScrollIndicators];
-	
-	if(self.stepsController.stepButtonColor)
-		[self.nextButton setTitleColor:self.stepsController.stepButtonColor forState:UIControlStateNormal];
-}
+- (BOOL)proceed {
+	if ([super proceed]) {
+		NSMutableDictionary *result = [@{} mutableCopy];
+		result[@"q"] = self.questionnaireData[@"key"];
+		result[@"a"] = [@[] mutableCopy];
 
-- (void)proceed {
-    NSMutableDictionary *result = [@{} mutableCopy];
-    result[@"q"] = self.questionnaireData[@"key"];
-    result[@"a"] = [@[] mutableCopy];
-    
-    [self.selectedOptions enumerateObjectsUsingBlock:^(NSNumber *buttonTag, NSUInteger idx, BOOL *stop) {
-        NSDictionary *option = self.questionnaireData[@"options"][[buttonTag integerValue]];
-        result[@"a"][idx] = option[@"key"];
-    }];
-    [self.stepsController.results[@"data"] addObject:result];
-    
-    [self.stepsController showNextStep];
+		[self.selectedOptions enumerateObjectsUsingBlock:^(NSNumber *buttonTag, NSUInteger idx, BOOL *stop) {
+			NSDictionary *option = self.questionnaireData[@"options"][[buttonTag integerValue]];
+			result[@"a"][idx] = option[@"key"];
+		}];
+		[self.stepsController.results[@"data"] addObject:result];
+
+		[self.stepsController showNextStep];
+
+		return YES;
+	}
+
+	return NO;
 }
 
 - (void)previousProceed {
+	[super previousProceed];
+
 	NSMutableDictionary *result = [@{} mutableCopy];
 	result[@"q"] = self.questionnaireData[@"key"];
 	result[@"a"] = [@[] mutableCopy];
@@ -338,11 +247,6 @@
 }
 
 - (void)checkboxToggle:(UIButton *)button {
-    
-    if (!self.nextButton.enabled) {
-        self.nextButton.enabled = YES;
-    }
-    
     if (button.selected) {
         [self.selectedOptions removeObject:@(button.tag)];
         button.selected = !button.selected;

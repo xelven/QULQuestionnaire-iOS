@@ -25,6 +25,7 @@
 #import "QULQuestionnaireSmileyViewController.h"
 #import "QULQuestionnaireTextViewController.h"
 #import "QULQuestionnaireSingleSelectViewController.h"
+#import "QULQuestionnaireVerticalSingleSelectViewController.h"
 #import "QULQuestionnaireMultiSelectViewController.h"
 #import "QULQuestionnaireSortableViewController.h"
 #import "QULQuestionnaireInstructionViewController.h"
@@ -60,11 +61,6 @@
     self.results[@"data"] = [@[] mutableCopy];
     self.results[@"user"] = @"userId";
     self.results[@"startTime"] = [NSDate date];
-	if(self.titleColor)
-		self.stepsBar.mainColor = self.titleColor;
-	
-	if(self.buttonColor)
-		self.stepButtonColor = self.buttonColor;
 }
 
 - (void)prepareViewControllers:(NSArray *)questionnaireData {
@@ -73,8 +69,13 @@
     [questionnaireData enumerateObjectsUsingBlock:^(NSDictionary *question, NSUInteger idx, BOOL *stop) {
         UIViewController *viewController;
         if ([question[@"type"] isEqualToString:@"radio"]) {
-            viewController = [[QULQuestionnaireSingleSelectViewController alloc] init];
-            ((QULQuestionnaireSingleSelectViewController*)viewController).questionnaireData = question;
+			if ([question[@"decreaseIncreaseAccessory"] boolValue]) {
+				viewController = [[QULQuestionnaireSingleSelectViewController alloc] init];
+				((QULQuestionnaireSingleSelectViewController*)viewController).questionnaireData = question;
+			} else {
+				viewController = [[QULQuestionnaireVerticalSingleSelectViewController alloc] init];
+				((QULQuestionnaireVerticalSingleSelectViewController*)viewController).questionnaireData = question;
+			}
         } else if ([question[@"type"] isEqualToString:@"checkbox"]) {
             viewController = [[QULQuestionnaireMultiSelectViewController alloc] init];
             ((QULQuestionnaireMultiSelectViewController*)viewController).questionnaireData = question;
@@ -117,6 +118,24 @@
 
 - (BOOL)showStepsAnimated {
     return NO;
+}
+
+#pragma mark - Setter
+
+- (void)setTitleColor:(UIColor *)titleColor {
+	if (_titleColor != titleColor) {
+		_titleColor = titleColor;
+
+		self.stepsBar.mainColor = titleColor;
+	}
+}
+
+- (void)setButtonColor:(UIColor *)buttonColor {
+	if (_buttonColor != buttonColor) {
+		_buttonColor = buttonColor;
+
+		self.stepButtonColor = buttonColor;
+	}
 }
 
 @end
