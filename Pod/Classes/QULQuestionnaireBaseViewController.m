@@ -321,15 +321,10 @@
 	if (nextImage) {
 		[nextButton setImage:nextImage forState:UIControlStateNormal];
 
-		if (NSFoundationVersionNumber >= NSFoundationVersionNumber_iOS_9_0) {
-			nextButton.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 20);
-			nextButton.semanticContentAttribute = UISemanticContentAttributeForceRightToLeft;
-		} else {
-			nextButton.titleEdgeInsets = UIEdgeInsetsMake(0, 20, 0, 0);
-			nextButton.transform = CGAffineTransformMakeScale(-1.0, 1.0);
-			nextButton.titleLabel.transform = CGAffineTransformMakeScale(-1.0, 1.0);
-			nextButton.imageView.transform = CGAffineTransformMakeScale(-1.0, 1.0);
-		}
+		nextButton.titleEdgeInsets = UIEdgeInsetsMake(0, 20, 0, 0);
+		nextButton.transform = CGAffineTransformMakeScale(-1.0, 1.0);
+		nextButton.titleLabel.transform = CGAffineTransformMakeScale(-1.0, 1.0);
+		nextButton.imageView.transform = CGAffineTransformMakeScale(-1.0, 1.0);
 	}
 	nextButton.backgroundColor = [UIColor whiteColor];
 	nextButton.layer.borderColor = [UIColor colorWithRed:229/255.0f green:229/255.0f blue:229/255.0f alpha:1.0f].CGColor; // #E5E5E5
