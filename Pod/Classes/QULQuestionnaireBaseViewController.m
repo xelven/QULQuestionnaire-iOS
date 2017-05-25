@@ -8,7 +8,6 @@
 
 #import "QULQuestionnaireBaseViewController.h"
 #import "RMStepsController.h"
-#import "QULLabel.h"
 
 @interface QULQuestionnaireBaseViewController ()
 
@@ -18,10 +17,6 @@
 
 @property (strong, nonatomic) UIImageView *requiredImageView;
 @property (strong, nonatomic) UILabel *requiredLabel;
-
-@property (strong, nonatomic) QULLabel *alertBottomLabel;
-@property (strong, nonatomic) UIButton *previousButton;
-@property (strong, nonatomic) UIButton *nextButton;
 
 @end
 
@@ -181,19 +176,12 @@
 
 #pragma mark - Actions
 
-- (BOOL)proceed {
-	if (self.isRequired && self.alertBottomLabel.hidden == YES) {
-		self.alertBottomLabel.text = [NSString stringWithFormat:@"This is a required function. If you wish to skip, please tap the '%@' button again.", [self.nextButton titleForState:UIControlStateNormal]];
-		self.alertBottomLabel.hidden = NO;
-		return NO;
-	} else {
-		self.alertBottomLabel.hidden = YES;
-		return YES;
-	}
+- (void)proceed {
+	
 }
 
 - (void)previousProceed {
-
+	self.alertBottomLabel.hidden = YES;
 }
 
 #pragma mark - Setter

@@ -60,7 +60,7 @@
     self.selectedOptions = [@[] mutableCopy];
 	
 	[self updateQuestionTitle:self.questionnaireData[@"question"]];
-	self.required = ![self.questionnaireData[@"required"] boolValue];
+	self.required = [self.questionnaireData[@"required"] boolValue];
 
     UILabel *instructionLabel = [[UILabel alloc] init];
 	instructionLabel.font = [UIFont systemFontOfSize:12];
@@ -210,40 +210,41 @@
 	return size;
 }
 
-- (BOOL)proceed {
-	if ([super proceed]) {
-		NSMutableDictionary *result = [@{} mutableCopy];
-		result[@"q"] = self.questionnaireData[@"key"];
-		result[@"a"] = [@[] mutableCopy];
+- (void)proceed {
+	[super proceed];
 
-		[self.selectedOptions enumerateObjectsUsingBlock:^(NSNumber *buttonTag, NSUInteger idx, BOOL *stop) {
-			NSDictionary *option = self.questionnaireData[@"options"][[buttonTag integerValue]];
-			result[@"a"][idx] = option[@"key"];
-		}];
-		[self.stepsController.results[@"data"] addObject:result];
+	NSInteger minSelectable = [self.questionnaireData[@"minSelectable"] integerValue];
+	NSInteger maxSelectable = [self.questionnaireData[@"maxSelectable"] integerValue];
 
+	if ((self.selectedOptions.count < minSelectable || (maxSelectable > 0 && self.selectedOptions.count > maxSelectable)) &&
+		self.isRequired && self.alertBottomLabel.hidden == YES) {
+		self.alertBottomLabel.text = [NSString stringWithFormat:@"This is a required function. If you wish to skip, please tap the '%@' button again.", [self.nextButton titleForState:UIControlStateNormal]];
+		self.alertBottomLabel.hidden = NO;
+	} else {
+		self.alertBottomLabel.hidden = YES;
+
+		[self sendResults];
 		[self.stepsController showNextStep];
-
-		return YES;
 	}
-
-	return NO;
 }
 
 - (void)previousProceed {
 	[super previousProceed];
+	
+	[self sendResults];
+	[self.stepsController showPreviousStep];
+}
 
+- (void)sendResults {
 	NSMutableDictionary *result = [@{} mutableCopy];
 	result[@"q"] = self.questionnaireData[@"key"];
 	result[@"a"] = [@[] mutableCopy];
-	
+
 	[self.selectedOptions enumerateObjectsUsingBlock:^(NSNumber *buttonTag, NSUInteger idx, BOOL *stop) {
 		NSDictionary *option = self.questionnaireData[@"options"][[buttonTag integerValue]];
 		result[@"a"][idx] = option[@"key"];
 	}];
 	[self.stepsController.results[@"data"] addObject:result];
-	
-	[self.stepsController showPreviousStep];
 }
 
 - (void)checkboxToggle:(UIButton *)button {

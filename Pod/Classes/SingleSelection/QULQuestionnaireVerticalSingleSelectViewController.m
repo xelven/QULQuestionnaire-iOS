@@ -48,7 +48,7 @@ static const NSInteger otherOption = -1;
 											   ofType:@"bundle"]];
 	
 	[self updateQuestionTitle:self.questionnaireData[@"question"]];
-	self.required = ![self.questionnaireData[@"required"] boolValue];
+	self.required = [self.questionnaireData[@"required"] boolValue];
 
 	UILabel *instructionLabel = [[UILabel alloc] init];
 	instructionLabel.font = [UIFont systemFontOfSize:12];
@@ -270,35 +270,35 @@ static const NSInteger otherOption = -1;
 	return size;
 }
 
-- (BOOL)proceed {
-	if ([super proceed]) {
-		NSMutableDictionary *result = [@{} mutableCopy];
-		result[@"q"] = self.questionnaireData[@"key"];
+- (void)proceed {
+	[super proceed];
+	
+	__block BOOL selected = NO;
+	[self.buttons enumerateObjectsUsingBlock:^(UIButton *button, NSUInteger idx, BOOL *stop) {
+		if (button.selected) {
+			selected = YES;
+			*stop = YES;
+		}
+	}];
+	if (!selected && self.isRequired && self.alertBottomLabel.hidden == YES) {
+		self.alertBottomLabel.text = [NSString stringWithFormat:@"This is a required function. If you wish to skip, please tap the '%@' button again.", [self.nextButton titleForState:UIControlStateNormal]];
+		self.alertBottomLabel.hidden = NO;
+	} else {
+		self.alertBottomLabel.hidden = YES;
 
-		[self.buttons enumerateObjectsUsingBlock:^(UIButton *button, NSUInteger idx, BOOL *stop) {
-			if (button.selected) {
-				if (button.tag == otherOption) {
-					result[@"a"] = self.textField.text;
-				} else {
-					NSDictionary *option = self.questionnaireData[@"options"][button.tag];
-					result[@"a"] = option[@"key"];
-				}
-
-				*stop = YES;
-			}
-		}];
-		[self.stepsController.results[@"data"] addObject:result];
-
+		[self sendResults];
 		[self.stepsController showNextStep];
-
-		return YES;
 	}
-	return NO;
 }
 
 - (void)previousProceed {
 	[super previousProceed];
 
+	[self sendResults];
+	[self.stepsController showPreviousStep];
+}
+
+- (void)sendResults {
 	NSMutableDictionary *result = [@{} mutableCopy];
 	result[@"q"] = self.questionnaireData[@"key"];
 
@@ -315,8 +315,6 @@ static const NSInteger otherOption = -1;
 		}
 	}];
 	[self.stepsController.results[@"data"] addObject:result];
-
-	[self.stepsController showPreviousStep];
 }
 
 - (void)didSelectButton:(UIButton *)selected {
