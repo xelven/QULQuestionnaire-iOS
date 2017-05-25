@@ -174,6 +174,8 @@
 		textView.textColor = [UIColor blackColor];
 	}
 	[textView becomeFirstResponder];
+
+	self.redNextButton.hidden = (textView.text.length == 0);
 }
 
 - (void)textViewDidEndEditing:(UITextView *)textView {
@@ -186,12 +188,7 @@
 
 - (void)textViewDidChange:(UITextView *)textView {
 	NSInteger length = textView.text.length;
-
-	if (length > 0) {
-		self.redNextButton.hidden = NO;
-	} else {
-		self.redNextButton.hidden = YES;
-	}
+	self.redNextButton.hidden = (length == 0);
 
 	[self updateMessageLabel:length];
 }
@@ -239,6 +236,8 @@
 	UIScrollView *scrollView = [[self.view subviews] firstObject];
 	scrollView.contentInset = contentInsets;
 	scrollView.scrollIndicatorInsets = contentInsets;
+
+	self.redNextButton.hidden = YES;
 }
 
 - (UIKeyboardType)keyboardTypeForInput:(NSString *)input {

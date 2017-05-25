@@ -320,6 +320,8 @@ static const NSInteger otherOption = -1;
 }
 
 - (void)didSelectButton:(UIButton *)selected {
+	self.alertBottomLabel.hidden = YES;
+
 	for (UIButton *button in self.buttons) {
 		button.selected = (button == selected);
 	}

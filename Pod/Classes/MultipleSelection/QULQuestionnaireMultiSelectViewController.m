@@ -250,6 +250,8 @@
 }
 
 - (void)checkboxToggle:(UIButton *)button {
+	self.alertBottomLabel.hidden = YES;
+	
     if (button.selected) {
         [self.selectedOptions removeObject:@(button.tag)];
         button.selected = !button.selected;
