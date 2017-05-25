@@ -267,6 +267,7 @@
 		return _textView;
 	}
 
+	// TODO: line: 19px (1.2)
 	DotBorderTextView *textView = [[DotBorderTextView alloc] init];
 	textView.translatesAutoresizingMaskIntoConstraints = NO;
 	textView.delegate = self;
@@ -276,7 +277,7 @@
 	textView.backgroundColor = [UIColor whiteColor];
 	textView.layer.cornerRadius = 4.0;
 	textView.layer.borderWidth = 1.0;
-	textView.layer.masksToBounds = YES;
+	textView.layer.masksToBounds = NO;
 	textView.textContainerInset = UIEdgeInsetsMake(5, 5, 0, 5);
 
 	_textView = textView;
@@ -290,10 +291,10 @@
 	}
 
 	UILabel *messageLabel = [[UILabel alloc] init];
+	messageLabel.translatesAutoresizingMaskIntoConstraints = NO;
 	messageLabel.font = [UIFont systemFontOfSize:12];
 	messageLabel.textColor = [UIColor colorWithRed:119.f/255.f green:119.f/255.f blue:119.f/255.f alpha:1.f]; // #777777
 	messageLabel.numberOfLines = 0;
-	messageLabel.translatesAutoresizingMaskIntoConstraints = NO;
 
 	_messageLabel = messageLabel;
 

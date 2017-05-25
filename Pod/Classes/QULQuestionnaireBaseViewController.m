@@ -171,6 +171,7 @@
 	NSMutableAttributedString *finalTitle = [[NSMutableAttributedString alloc] initWithAttributedString:noTitle];
 	[finalTitle appendAttributedString:[[NSAttributedString alloc] initWithString:title]];
 
+	// TODO: line: 30px (1.3)
 	self.questionLabel.attributedText = finalTitle;
 }
 
@@ -240,6 +241,8 @@
 	_requiredLabel = [[UILabel alloc] init];
 	_requiredLabel.translatesAutoresizingMaskIntoConstraints = NO;
 	_requiredLabel.text = @"Required";
+	_requiredLabel.font = [UIFont boldSystemFontOfSize:15];
+	_requiredLabel.textColor = [UIColor colorWithRed:193/255.0f green:26/255.0f blue:36/255.0f alpha:1.0f]; // #C11A24
 	_requiredLabel.hidden = YES;
 
 	return _requiredLabel;
@@ -250,14 +253,15 @@
 		return _alertBottomLabel;
 	}
 
+	// TODO: line: 17px (1.2)
 	_alertBottomLabel = [[QULLabel alloc] init];
 	_alertBottomLabel.translatesAutoresizingMaskIntoConstraints = NO;
 	_alertBottomLabel.textInsets = UIEdgeInsetsMake(0, 15, 0, 15);
+	_alertBottomLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:14.f];
 	_alertBottomLabel.numberOfLines = 0;
 	_alertBottomLabel.hidden = YES;
 	_alertBottomLabel.backgroundColor = [UIColor colorWithRed:193/255.0f green:26/255.0f blue:36/255.0f alpha:1.0f]; // #C11A24
 	_alertBottomLabel.textColor = [UIColor whiteColor];
-	_alertBottomLabel.font = [UIFont systemFontOfSize:14];
 
 	return _alertBottomLabel;
 }
@@ -272,12 +276,12 @@
 
 	UIButton *previousButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
 	previousButton.translatesAutoresizingMaskIntoConstraints = NO;
-	previousButton.titleLabel.font = [UIFont boldSystemFontOfSize:17];
+	previousButton.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:17.f];
 	[previousButton setTitle:NSLocalizedString(NSLocalizedString(@"Prev", nil), nil)
 					forState:UIControlStateNormal];
 	[previousButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
 	[previousButton setImage:prevImage forState:UIControlStateNormal];
-	previousButton.titleEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
+	previousButton.titleEdgeInsets = UIEdgeInsetsMake(0, 20, 0, 0);
 	previousButton.backgroundColor = [UIColor whiteColor];
 	previousButton.layer.borderColor = [UIColor colorWithRed:229/255.0f green:229/255.0f blue:229/255.0f alpha:1.0f].CGColor; // #E5E5E5
 	previousButton.layer.borderWidth = 1.0f;
@@ -311,17 +315,17 @@
 
 	UIButton *nextButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
 	nextButton.translatesAutoresizingMaskIntoConstraints = NO;
-	nextButton.titleLabel.font = [UIFont boldSystemFontOfSize:17];
+	nextButton.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:17.f];
 	[nextButton setTitle:NSLocalizedString(nextButtonStr, nil) forState:UIControlStateNormal];
 //	[nextButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
 	if (nextImage) {
 		[nextButton setImage:nextImage forState:UIControlStateNormal];
 
 		if (NSFoundationVersionNumber >= NSFoundationVersionNumber_iOS_9_0) {
-			nextButton.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 10);
+			nextButton.titleEdgeInsets = UIEdgeInsetsMake(0, 0, 0, 20);
 			nextButton.semanticContentAttribute = UISemanticContentAttributeForceRightToLeft;
 		} else {
-			nextButton.titleEdgeInsets = UIEdgeInsetsMake(0, 10, 0, 0);
+			nextButton.titleEdgeInsets = UIEdgeInsetsMake(0, 20, 0, 0);
 			nextButton.transform = CGAffineTransformMakeScale(-1.0, 1.0);
 			nextButton.titleLabel.transform = CGAffineTransformMakeScale(-1.0, 1.0);
 			nextButton.imageView.transform = CGAffineTransformMakeScale(-1.0, 1.0);

@@ -62,8 +62,9 @@
 	[self updateQuestionTitle:self.questionnaireData[@"question"]];
 	self.required = [self.questionnaireData[@"required"] boolValue];
 
+	// TODO: line: 15px (1.3)
     UILabel *instructionLabel = [[UILabel alloc] init];
-	instructionLabel.font = [UIFont systemFontOfSize:12];
+	instructionLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:12.f];
 	instructionLabel.textColor = [UIColor colorWithRed:138.f/255.f green:138.f/255.f blue:138.f/255.f alpha:1.f]; // #8A8A8A
     instructionLabel.numberOfLines = 0;
     instructionLabel.translatesAutoresizingMaskIntoConstraints = NO;
@@ -128,6 +129,7 @@
         [button addTarget:self action:@selector(checkboxToggle:) forControlEvents:UIControlEventTouchUpInside];
         [self.contentView addSubview:button];
 
+		// TODO: line: 21px (1.2)
 		UILabel *label = [[UILabel alloc] init];
         label.translatesAutoresizingMaskIntoConstraints = NO;
 		label.font = [UIFont systemFontOfSize:17];
