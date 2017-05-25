@@ -24,6 +24,7 @@
 #import "QULQuestionnaireSliderViewController.h"
 #import "QULQuestionnaireSmileyViewController.h"
 #import "QULQuestionnaireTextViewController.h"
+#import "QULQuestionnaireLimitTextViewController.h"
 #import "QULQuestionnaireSingleSelectViewController.h"
 #import "QULQuestionnaireVerticalSingleSelectViewController.h"
 #import "QULQuestionnaireMultiSelectViewController.h"
@@ -80,8 +81,8 @@
             viewController = [[QULQuestionnaireMultiSelectViewController alloc] init];
             ((QULQuestionnaireMultiSelectViewController*)viewController).questionnaireData = question;
         } else if ([question[@"type"] isEqualToString:@"text"]) {
-            viewController = [[QULQuestionnaireTextViewController alloc] init];
-            ((QULQuestionnaireTextViewController*)viewController).questionnaireData = question;
+            viewController = [[QULQuestionnaireLimitTextViewController alloc] init];
+            ((QULQuestionnaireLimitTextViewController*)viewController).questionnaireData = question;
         } else if ([question[@"type"] isEqualToString:@"smiley"]) {
             viewController = [[QULQuestionnaireSmileyViewController alloc] init];
             ((QULQuestionnaireSmileyViewController*)viewController).questionnaireData = question;
