@@ -82,7 +82,7 @@
 																			 options:0
 																			 metrics:nil
 																			   views:views]];
-	[self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(15)-[textView(345)]-(15@999)-|"
+	[self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"H:|-(15)-[textView]-(15@999)-|"
 																			 options:0
 																			 metrics:nil
 																			   views:views]];
@@ -90,7 +90,7 @@
 																			 options:0
 																			 metrics:nil
 																			   views:views]];
-	[self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[textView]-(9)-[nextButton(30)]|"
+	[self.contentView addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[textView]-(9)-[nextButton(30)]-(15)-|"
 																			 options:0
 																			 metrics:nil
 																			   views:views]];
@@ -106,6 +106,11 @@
 	[[NSNotificationCenter defaultCenter] addObserver:self
 											 selector:@selector(keyboardWillHide:)
 												 name:UIKeyboardWillHideNotification
+											   object:nil];
+
+	[[NSNotificationCenter defaultCenter] addObserver:self
+											 selector:@selector(keyboardWillChangeFrame:)
+												 name:UIKeyboardWillChangeFrameNotification
 											   object:nil];
 }
 
@@ -150,12 +155,8 @@
 	self.messageLabel.text = [NSString stringWithFormat:@"%zd/%zd characters", length, self.maxLength];
 
 	if (length < self.maxLength) {
-		[self.textView showDotBorder:YES];
-		self.textView.layer.borderColor = [UIColor clearColor].CGColor;
 		self.messageLabel.textColor = [UIColor colorWithRed:119.f/255.f green:119.f/255.f blue:119.f/255.f alpha:1.f]; // #777777
 	} else {
-		[self.textView showDotBorder:NO];
-		self.textView.layer.borderColor = [UIColor colorWithRed:193/255.f green:26/255.f blue:36/255.f alpha:1.f].CGColor; // #C11A24
 		self.messageLabel.textColor = [UIColor colorWithRed:193/255.f green:26/255.f blue:36/255.f alpha:1.f]; // #C11A24
 	}
 }
@@ -175,6 +176,8 @@
 	}
 	[textView becomeFirstResponder];
 
+	[self.textView showDotBorder:NO];
+	self.textView.layer.borderColor = [UIColor colorWithRed:193/255.f green:26/255.f blue:36/255.f alpha:1.f].CGColor; // #C11A24
 	self.redNextButton.hidden = (textView.text.length == 0);
 }
 
@@ -183,6 +186,10 @@
 		textView.text = self.questionnaireData[@"placeholder"];
 		textView.textColor = [UIColor lightGrayColor];
 	}
+
+	[self.textView showDotBorder:YES];
+	self.textView.layer.borderColor = [UIColor clearColor].CGColor;
+
 	[textView resignFirstResponder];
 }
 
@@ -215,23 +222,7 @@
 #pragma mark - UIKeyboard show / hide
 
 - (void)keyboardWillShow:(NSNotification *)notification {
-	NSDictionary *info = [notification userInfo];
-	CGRect keyboardRect = [info[UIKeyboardFrameBeginUserInfoKey] CGRectValue];
-	keyboardRect = [self.view convertRect:keyboardRect fromView:nil];
 
-	UIEdgeInsets contentInsets = UIEdgeInsetsMake(0.0,
-												  0.0,
-												  keyboardRect.size.height - self.stepsController.stepsBar.frame.size.height + 10,
-												  0.0);
-	UIScrollView *scrollView = [[self.view subviews] firstObject];
-	scrollView.contentInset = contentInsets;
-	scrollView.scrollIndicatorInsets = contentInsets;
-
-	CGRect viewRect = self.view.frame;
-	viewRect.size.height -= keyboardRect.size.height;
-	if (!CGRectContainsPoint(viewRect, self.textView.frame.origin) ) {
-		[scrollView scrollRectToVisible:self.textView.frame animated:YES];
-	}
 }
 
 - (void)keyboardWillHide:(NSNotification *)notification {
@@ -241,6 +232,29 @@
 	scrollView.scrollIndicatorInsets = contentInsets;
 
 	self.redNextButton.hidden = YES;
+}
+
+- (void)keyboardWillChangeFrame:(NSNotification *)notification {
+	CGRect keyboardRect = [notification.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
+
+	[self keyboardUpdateFrame:keyboardRect];
+}
+
+- (void)keyboardUpdateFrame:(CGRect)keyboardRect {
+	keyboardRect = [self.view convertRect:keyboardRect fromView:nil];
+	UIEdgeInsets contentInsets = UIEdgeInsetsMake(0.0,
+												  0.0,
+												  keyboardRect.size.height - self.nextButton.frame.size.height,
+												  0.0);
+	UIScrollView *scrollView = [[self.view subviews] firstObject];
+	scrollView.contentInset = contentInsets;
+	scrollView.scrollIndicatorInsets = contentInsets;
+
+	CGRect viewRect = self.view.frame;
+	viewRect.size.height -= keyboardRect.size.height;
+	if (!CGRectContainsPoint(viewRect, self.textView.frame.origin)) {
+		[scrollView scrollRectToVisible:self.textView.frame animated:YES];
+	}
 }
 
 - (UIKeyboardType)keyboardTypeForInput:(NSString *)input {
@@ -280,8 +294,10 @@
 	textView.backgroundColor = [UIColor whiteColor];
 	textView.layer.cornerRadius = 4.0;
 	textView.layer.borderWidth = 1.0;
-	textView.layer.masksToBounds = NO;
+	textView.layer.masksToBounds = YES;
 	textView.textContainerInset = UIEdgeInsetsMake(5, 5, 0, 5);
+	[textView showDotBorder:YES];
+	textView.layer.borderColor = [UIColor clearColor].CGColor;
 
 	_textView = textView;
 
