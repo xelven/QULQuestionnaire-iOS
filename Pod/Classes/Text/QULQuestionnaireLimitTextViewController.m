@@ -196,6 +196,9 @@
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text {
 	if ([text isEqualToString:@""]) {
 		return YES;
+	} else if ([text isEqualToString:@"\n"]) {
+		[self.view endEditing:YES];
+		return NO;
 	} else if (textView.text.length - range.length + text.length > self.maxLength) {
 		return NO;
 	}
@@ -273,6 +276,7 @@
 	textView.layoutManager.delegate = self;
 	textView.font = [UIFont systemFontOfSize:16];
 	textView.keyboardType = [self keyboardTypeForInput:self.questionnaireData[@"input"]];
+	textView.returnKeyType = UIReturnKeyDone;
 	textView.backgroundColor = [UIColor whiteColor];
 	textView.layer.cornerRadius = 4.0;
 	textView.layer.borderWidth = 1.0;
