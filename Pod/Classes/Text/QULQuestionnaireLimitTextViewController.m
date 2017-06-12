@@ -123,7 +123,7 @@
 
 	if ([self.textView.text isEqualToString:@""] &&
 		self.isRequired && self.alertBottomLabel.hidden == YES) {
-		self.alertBottomLabel.text = [NSString stringWithFormat:@"This is a required function. If you wish to skip, please tap the '%@' button again.", [self.nextButton titleForState:UIControlStateNormal]];
+		self.alertBottomLabel.text = [NSString stringWithFormat:NSLocalizedString(@"This is a required function. If you wish to skip, please tap the '%@' button again.", nil), [self.nextButton titleForState:UIControlStateNormal]];
 		self.alertBottomLabel.hidden = NO;
 	} else {
 		self.alertBottomLabel.hidden = YES;
@@ -152,7 +152,7 @@
 }
 
 - (void)updateMessageLabel:(NSInteger)length {
-	self.messageLabel.text = [NSString stringWithFormat:@"%zd/%zd characters", length, self.maxLength];
+	self.messageLabel.text = [NSString stringWithFormat:NSLocalizedString(@"%zd/%zd characters", nil), length, self.maxLength];
 
 	if (length < self.maxLength) {
 		self.messageLabel.textColor = [UIColor colorWithRed:119.f/255.f green:119.f/255.f blue:119.f/255.f alpha:1.f]; // #777777
@@ -328,9 +328,9 @@
 	NSString *nextButtonStr;
 	UIImage *nextImage;
 	if (self == [self.stepsController.childViewControllers lastObject]) {
-		nextButtonStr = @"Complete";
+		nextButtonStr = NSLocalizedString(@"Complete", nil);
 	} else {
-		nextButtonStr = @"Next";
+		nextButtonStr = NSLocalizedString(@"Next", nil);
 		NSString *imgPath = [resourceBundle pathForResource:@"next" ofType:@"png"];
 		nextImage = [UIImage imageWithContentsOfFile:imgPath];
 	}

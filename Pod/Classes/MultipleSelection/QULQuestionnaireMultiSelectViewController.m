@@ -220,7 +220,7 @@
 
 	if ((self.selectedOptions.count < minSelectable || (maxSelectable > 0 && self.selectedOptions.count > maxSelectable)) &&
 		self.isRequired && self.alertBottomLabel.hidden == YES) {
-		self.alertBottomLabel.text = [NSString stringWithFormat:@"This is a required function. If you wish to skip, please tap the '%@' button again.", [self.nextButton titleForState:UIControlStateNormal]];
+		self.alertBottomLabel.text = [NSString stringWithFormat:NSLocalizedString(@"This is a required function. If you wish to skip, please tap the '%@' button again.", nil), [self.nextButton titleForState:UIControlStateNormal]];
 		self.alertBottomLabel.hidden = NO;
 	} else {
 		self.alertBottomLabel.hidden = YES;

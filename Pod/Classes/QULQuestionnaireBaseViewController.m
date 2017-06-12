@@ -240,7 +240,7 @@
 
 	_requiredLabel = [[UILabel alloc] init];
 	_requiredLabel.translatesAutoresizingMaskIntoConstraints = NO;
-	_requiredLabel.text = @"Required";
+	_requiredLabel.text = NSLocalizedString(@"Required", nil);
 	_requiredLabel.font = [UIFont boldSystemFontOfSize:15];
 	_requiredLabel.textColor = [UIColor colorWithRed:193/255.0f green:26/255.0f blue:36/255.0f alpha:1.0f]; // #C11A24
 	_requiredLabel.hidden = YES;
@@ -277,7 +277,7 @@
 	UIButton *previousButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
 	previousButton.translatesAutoresizingMaskIntoConstraints = NO;
 	previousButton.titleLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:17.f];
-	[previousButton setTitle:NSLocalizedString(NSLocalizedString(@"Prev", nil), nil)
+	[previousButton setTitle:NSLocalizedString(@"Prev", nil)
 					forState:UIControlStateNormal];
 	[previousButton setTitleColor:[UIColor lightGrayColor] forState:UIControlStateDisabled];
 	[previousButton setImage:prevImage forState:UIControlStateNormal];
@@ -306,9 +306,9 @@
 	NSString *nextButtonStr;
 	UIImage *nextImage;
 	if (self == [self.stepsController.childViewControllers lastObject]) {
-		nextButtonStr = @"Complete";
+		nextButtonStr = NSLocalizedString(@"Complete", nil);
 	} else {
-		nextButtonStr = @"Next";
+		nextButtonStr = NSLocalizedString(@"Next", nil);
 		NSString *imgPath = [self.resourceBundle pathForResource:@"next" ofType:@"png"];
 		nextImage = [[UIImage imageWithContentsOfFile:imgPath] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
 	}
