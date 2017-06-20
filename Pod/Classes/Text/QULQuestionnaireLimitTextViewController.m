@@ -52,7 +52,7 @@
 	self.maxLength = self.questionnaireData[@"maxLength"] ? [self.questionnaireData[@"maxLength"] integerValue] : 80;
 
 	UITextView *textView = self.textView;
-	if (self.questionnaireData[@"content"]) {
+	if ([self.questionnaireData[@"content"] isKindOfClass:[NSString class]]) {
 		textView.text = self.questionnaireData[@"content"];
 		textView.textColor = [UIColor blackColor];
 		[self updateMessageLabel:textView.text.length];
@@ -170,7 +170,7 @@
 #pragma mark - UITextViewDelegate
 
 - (void)textViewDidBeginEditing:(UITextView *)textView {
-	if ([textView.text isEqualToString:self.questionnaireData[@"placeholder"]]) {
+	if ([textView.text isEqualToString:self.questionnaireData[@"placeholder"]] || self.questionnaireData[@"placeholder"] == nil) {
 		textView.text = @"";
 		textView.textColor = [UIColor blackColor];
 	}
