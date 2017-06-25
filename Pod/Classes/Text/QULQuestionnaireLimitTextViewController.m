@@ -19,6 +19,7 @@
 @property (strong, nonatomic) UILabel *messageLabel;
 @property (strong, nonatomic) UIButton *redNextButton;
 
+@property (strong, nonatomic) NSString *placeholder;
 @property (nonatomic) NSInteger maxLength;
 
 @end
@@ -50,6 +51,7 @@
 	[self updateQuestionTitle:self.questionnaireData[@"question"]];
 	self.required = [self.questionnaireData[@"required"] boolValue];
 	self.maxLength = self.questionnaireData[@"maxLength"] ? [self.questionnaireData[@"maxLength"] integerValue] : 80;
+	self.placeholder = self.questionnaireData[@"placeholder"] ? self.questionnaireData[@"placeholder"] : @"";
 
 	UITextView *textView = self.textView;
 	if ([self.questionnaireData[@"content"] isKindOfClass:[NSString class]]) {
@@ -170,7 +172,7 @@
 #pragma mark - UITextViewDelegate
 
 - (void)textViewDidBeginEditing:(UITextView *)textView {
-	if ([textView.text isEqualToString:self.questionnaireData[@"placeholder"]] || self.questionnaireData[@"placeholder"] == nil) {
+	if ([textView.text isEqualToString:self.placeholder]) {
 		textView.text = @"";
 		textView.textColor = [UIColor blackColor];
 	}
@@ -183,7 +185,7 @@
 
 - (void)textViewDidEndEditing:(UITextView *)textView {
 	if ([textView.text isEqualToString:@""]) {
-		textView.text = self.questionnaireData[@"placeholder"];
+		textView.text = self.placeholder;
 		textView.textColor = [UIColor lightGrayColor];
 	}
 
