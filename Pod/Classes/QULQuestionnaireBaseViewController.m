@@ -38,12 +38,16 @@
 
 	if (isShowPrevious == YES) {
 		[self.view addSubview:self.previousButton];
-		if (self.stepsController.stepButtonColor)
+		if (self.stepsController.stepButtonColor) {
+			self.previousButton.tintColor = self.stepsController.stepButtonColor;
 			[self.previousButton setTitleColor:self.stepsController.stepButtonColor forState:UIControlStateNormal];
+		}
 	}
 
-	if (self.stepsController.stepButtonColor)
+	if (self.stepsController.stepButtonColor) {
+		self.nextButton.tintColor = self.stepsController.stepButtonColor;
 		[self.nextButton setTitleColor:self.stepsController.stepButtonColor forState:UIControlStateNormal];
+	}
 	[self.view addSubview:self.nextButton];
 	[self.view addSubview:self.alertBottomLabel];
 
@@ -272,7 +276,7 @@
 	}
 
 	NSString *imgPath = [self.resourceBundle pathForResource:@"prev" ofType:@"png"];
-	UIImage *prevImage = [[UIImage imageWithContentsOfFile:imgPath] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+	UIImage *prevImage = [UIImage imageWithContentsOfFile:imgPath];
 
 	UIButton *previousButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
 	previousButton.translatesAutoresizingMaskIntoConstraints = NO;
@@ -310,7 +314,7 @@
 	} else {
 		nextButtonStr = NSLocalizedString(@"Next", nil);
 		NSString *imgPath = [self.resourceBundle pathForResource:@"next" ofType:@"png"];
-		nextImage = [[UIImage imageWithContentsOfFile:imgPath] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+		nextImage = [UIImage imageWithContentsOfFile:imgPath];
 	}
 
 	UIButton *nextButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
