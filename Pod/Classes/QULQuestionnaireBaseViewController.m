@@ -104,7 +104,7 @@
 																	  metrics:nil
 																		views:views]];
 	if (_previousButton)
-		[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[scrollView][previousButton(50)]|"
+		[self.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|[scrollView][previousButton(50)]-|"
 																		  options:0
 																		  metrics:nil
 																			views:views]];
